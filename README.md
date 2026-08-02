@@ -95,9 +95,9 @@ Subject: Executive Financial Summary – Reporting Period Ending [Current Date]
 
 Built by **Syed Ali Raza** — Finance & Accounts professional (Treasury, Tax, FP&A) transitioning into Finance Automation & Accounting Systems.
 
-- 🔗 LinkedIn: [linkedin.com/in/syed-ali-raza1990](https://linkedin.com/in/syed-ali-raza1990)
-- 💼 Upwork: [upwork.com/freelancers/syedaliraza73](https://upwork.com/freelancers/syedaliraza73)
-- 📧 Email: Alisherazi51215@Yahoo.Com
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/syed-ali-raza1990)
+[![Email](https://img.shields.io/badge/Email-Contact-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:Alisherazi51215@Yahoo.Com)
+[![Upwork](https://img.shields.io/badge/Upwork-Hire%20Me-6FDA44?style=for-the-badge&logo=upwork&logoColor=white)](https://upwork.com/freelancers/syedaliraza73)
 
 ---
 
