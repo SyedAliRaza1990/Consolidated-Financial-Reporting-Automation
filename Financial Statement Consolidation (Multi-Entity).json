@@ -1,0 +1,441 @@
+{
+  "name": "Financial Statement Consolidation (Multi-Entity)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        0
+      ],
+      "id": "6981b39b-4089-4be7-9ee7-04bb8c9f6092",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw",
+          "mode": "list",
+          "cachedResultName": "Financial Statement Consolidation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Company_A_TB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        -288
+      ],
+      "id": "15a94703-1060-48f3-899d-0f21c796d802",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oyVM3B0KNS3meEc0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw",
+          "mode": "list",
+          "cachedResultName": "Financial Statement Consolidation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 937652886,
+          "mode": "list",
+          "cachedResultName": "Company B",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit#gid=937652886"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -384,
+        176
+      ],
+      "id": "dfaed322-525b-48ad-9bc4-5829c7e3046a",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oyVM3B0KNS3meEc0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw",
+          "mode": "list",
+          "cachedResultName": "Financial Statement Consolidation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1564324903,
+          "mode": "list",
+          "cachedResultName": "Company C",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit#gid=1564324903"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -352,
+        -64
+      ],
+      "id": "4b0dad3c-7fa8-4711-acc4-951f9a7d2a23",
+      "name": "Get row(s) in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oyVM3B0KNS3meEc0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all merged items from the Merge Node\nconst allRows = $input.all().map(item => item.json);\n\n// Object to store consolidated balances\nconst consolidated = {};\n\nallRows.forEach(row => {\n  const account = row['Account Name'] || row['Account'] || row['AccountName'];\n  const balance = parseFloat(row['Balance'] || row['Amount'] || 0);\n  \n  if (!account) return;\n\n  if (!consolidated[account]) {\n    consolidated[account] = {\n      account_name: account,\n      account_type: row['Account Type'] || row['Type'] || '',\n      consolidated_balance: 0\n    };\n  }\n  \n  consolidated[account].consolidated_balance += balance;\n});\n\n// Intercompany Elimination Logic ($8,000 AR / AP Adjustment)\nif (consolidated['Intercompany AR']) {\n  consolidated['Intercompany AR'].consolidated_balance = 0;\n}\nif (consolidated['Intercompany AP']) {\n  consolidated['Intercompany AP'].consolidated_balance = 0;\n}\n\n// Return as formatted array for Sheet and Summary Nodes\nreturn Object.values(consolidated).map(acc => ({ json: acc }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -288
+      ],
+      "id": "79e7b5e5-f571-43f5-a2f8-7e2f1cbf2818",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw",
+          "mode": "list",
+          "cachedResultName": "Financial Statement Consolidation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1943990696,
+          "mode": "list",
+          "cachedResultName": "Consolidated_TB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qM2noj9csG_Gxxe4QthAZXwb6xshYCFVLT6WZ0Buhtw/edit#gid=1943990696"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Account Code": "={{ $json['Account Code'] }}",
+            "Account Name": "={{ $json['Account Name'] }}",
+            "Debit": "={{ $json.Debit }}"
+          },
+          "matchingColumns": [
+            "Account Code"
+          ],
+          "schema": [
+            {
+              "id": "Account Code",
+              "displayName": "Account Code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Account Name",
+              "displayName": "Account Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Debit",
+              "displayName": "Debit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        -288
+      ],
+      "id": "11adbe1e-5588-45bf-925c-80a6999ffb6e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "oyVM3B0KNS3meEc0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\n// Extract Balance Values\nlet revenue = 0, cogs = 0, salary = 0, rent = 0, utilities = 0;\nlet cash = 0, ar = 0, inventory = 0, equipment = 0;\nlet ap = 0, loan = 0, shareCapital = 0;\n\nitems.forEach(row => {\n  const code = String(row['Account Code']).trim();\n  const debit = parseFloat(row.Debit || 0);\n  const credit = parseFloat(row.Credit || 0);\n\n  if (code === '4000') revenue = credit;\n  if (code === '5000') cogs = debit;\n  if (code === '6000') salary = debit;\n  if (code === '6100') rent = debit;\n  if (code === '6200') utilities = debit;\n\n  if (code === '1001') cash = debit;\n  if (code === '1100') ar = debit;\n  if (code === '1200') inventory = debit;\n  if (code === '1500') equipment = debit;\n  if (code === '2000') ap = credit;\n  if (code === '2100') loan = credit;\n  if (code === '3000') shareCapital = credit;\n});\n\n// P&L Calculations\nconst grossProfit = revenue - cogs;\nconst totalOpex = salary + rent + utilities;\nconst netProfit = grossProfit - totalOpex;\n\n// Balance Sheet Calculations\nconst totalCurrentAssets = cash + ar + inventory;\nconst totalNonCurrentAssets = equipment;\nconst totalAssets = totalCurrentAssets + totalNonCurrentAssets;\n\nconst totalLiabilities = ap + loan;\nconst totalEquity = shareCapital + netProfit; // Retained Earnings = Net Profit\nconst totalLiabilitiesAndEquity = totalLiabilities + totalEquity;\n\nreturn [{\n  json: {\n    // Income Statement Metrics\n    revenue,\n    cogs,\n    grossProfit,\n    salary,\n    rent,\n    utilities,\n    totalOpex,\n    netProfit,\n\n    // Balance Sheet Metrics\n    cash,\n    ar,\n    inventory,\n    totalCurrentAssets,\n    equipment,\n    totalAssets,\n    ap,\n    loan,\n    totalLiabilities,\n    shareCapital,\n    totalEquity,\n    totalLiabilitiesAndEquity,\n    \n    // Balance Check\n    isBalanced: totalAssets === totalLiabilitiesAndEquity\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -288
+      ],
+      "id": "cc1ea76f-80f9-43d2-9cfa-2023aec1c483",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -32,
+        -64
+      ],
+      "id": "5c3b51fb-7796-4658-9c0d-91c8b23a3c39",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a Group Financial Controller / CFO. Analyze the following consolidated financial numbers for the Board of Directors:\n\nFinancial Summary Data:\n- Total Revenue: {{ $json.revenue }}\n- Cost of Sales: {{ $json.cogs }}\n- Gross Profit: {{ $json.grossProfit }}\n- Total OPEX: {{ $json.totalOpex }}\n- Net Profit: {{ $json.netProfit }}\n- Total Assets: {{ $json.totalAssets }}\n- Total Liabilities: {{ $json.totalLiabilities }}\n- Total Equity: {{ $json.totalEquity }}\n\nPlease generate a professional Executive Summary in markdown containing:\n1. Executive Performance Overview (3 bullet points)\n2. Profitability Analysis (Margins & OPEX Efficiency)\n3. Balance Sheet Health & Solvency Assessment\n4. Top 2 Strategic Recommendations for Management"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        80
+      ],
+      "id": "fcd28210-e6fc-43be-bd31-27509088e339",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PaB1ri20ep6LPh1i",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sheraziali42@gmail.com",
+        "subject": "Consolidated Financial Report - Executive Summary",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        80
+      ],
+      "id": "8e474178-df6a-4864-958e-2bf735cbe49c",
+      "name": "Send a message",
+      "webhookId": "89c46044-af9c-470b-a674-7a1ae1b08540",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "b7Pn1KhL2L180c2Q",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Function to convert basic Markdown to clean HTML\nfunction markdownToHtml(md) {\n  if (!md) return '';\n  return md\n    .replace(/^### (.*$)/gim, '<h3 style=\"color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; margin-top: 20px;\">$1</h3>')\n    .replace(/^#### (.*$)/gim, '<h4 style=\"color: #2b6cb0; margin-top: 15px; margin-bottom: 5px;\">$1</h4>')\n    .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/^\\* (.*$)/gim, '<li style=\"margin-bottom: 6px;\">$1</li>')\n    .replace(/\\n\\n/g, '<p style=\"line-height: 1.6; color: #2d3748;\"></p>')\n    .replace(/\\n/g, '<br>');\n}\n\nconst rawMarkdown = $input.first().json.content.parts[0].text;\nconst htmlContent = markdownToHtml(rawMarkdown);\n\n// Executive Styled HTML Template\nconst finalEmailHtml = `\n  <div style=\"font-family: 'Segoe UI', Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 25px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;\">\n    <div style=\"background-color: #0f172a; padding: 20px; border-radius: 6px; text-align: center; margin-bottom: 20px;\">\n      <h2 style=\"color: #ffffff; margin: 0; font-weight: 600; letter-spacing: 0.5px;\">CONSOLIDATED FINANCIAL REPORT</h2>\n      <p style=\"color: #94a3b8; margin: 5px 0 0 0; font-size: 13px;\">Group Financial Controller / CFO Statement</p>\n    </div>\n    <div style=\"padding: 10px 5px;\">\n      ${htmlContent}\n    </div>\n    <div style=\"margin-top: 30px; padding-top: 15px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b;\">\n      <p>This is an automated executive summary generated by the Financial Reporting Engine.</p>\n    </div>\n  </div>\n`;\n\nreturn [{ json: { emailHtml: finalEmailHtml } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        80
+      ],
+      "id": "be2323b6-2fa6-4ba1-b0bd-faf5244faa70",
+      "name": "Code in JavaScript2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "07b4f398-be27-4e84-881f-8fbff5454d1e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fdbda443cf38804f4b7391778895a877dba9b9fc07be8df10733cccfc464fcd4"
+  },
+  "nodeGroups": [],
+  "id": "TzI91p0HEJ3fLZ5h",
+  "tags": []
+}
